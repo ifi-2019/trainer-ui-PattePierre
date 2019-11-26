@@ -9,6 +9,8 @@ import java.lang.reflect.Method;
 import org.junit.Test;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 public class IndexControllerTest {
 
@@ -32,5 +34,23 @@ public class IndexControllerTest {
 
         assertNotNull(getMapping);
         assertArrayEquals(new String[]{"/"}, getMapping.value()); 
+    }
+    @Test
+    public void registerNewTrainer_shouldReturnAModelAndView(){
+        IndexController indexController = new IndexController();
+        ModelAndView modelAndView = indexController.registerNewTrainer("Blue");
+
+        assertNotNull(modelAndView);
+        assertEquals("register", modelAndView.getViewName());
+        assertEquals("Blue", modelAndView.getModel().get("name"));
+    }
+
+    @Test
+    public void registerNewTrainer_shouldBeAnnotated() throws NoSuchMethodException {
+        Method registerMethod = IndexController.class.getDeclaredMethod("registerNewTrainer", String.class);
+        PostMapping postMapping = registerMethod.getAnnotation(PostMapping.class);
+
+        assertNotNull(postMapping);
+        assertArrayEquals(new String[]{"/registerTrainer"}, postMapping.value());
     }
 }
